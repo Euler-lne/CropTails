@@ -1,34 +1,51 @@
-[gd_scene load_steps=7 format=3 uid="uid://e65psnc5h7ee"]
+[gd_scene load_steps=10 format=3 uid="uid://e65psnc5h7ee"]
 
 [ext_resource type="Script" uid="uid://db3fbtcyg2tu1" path="res://scripts/player/Player.cs" id="1_hss88"]
 [ext_resource type="SpriteFrames" uid="uid://c5nf732c1kh2r" path="res://animation/player.tres" id="1_rp718"]
 [ext_resource type="Script" uid="uid://b4dw8ghe25hy4" path="res://scripts/player/PlayerStateMachine.cs" id="3_hss88"]
-[ext_resource type="Script" uid="uid://cui2oegyncglw" path="res://scripts/player/PlayerIdleState.cs" id="4_6avc5"]
-[ext_resource type="Script" uid="uid://ejg3b0827p56" path="res://scripts/player/PlayerWalkState.cs" id="5_qd3e3"]
+[ext_resource type="Script" uid="uid://cui2oegyncglw" path="res://scripts/player/State/PlayerIdleState.cs" id="4_xuses"]
+[ext_resource type="Script" uid="uid://ejg3b0827p56" path="res://scripts/player/State/PlayerWalkState.cs" id="5_42irl"]
+[ext_resource type="Script" uid="uid://deojtld5br4oa" path="res://scripts/player/State/PlayerChoppingState.cs" id="6_xuses"]
+[ext_resource type="Script" uid="uid://cyglhju54o2fr" path="res://scripts/player/State/PlayerTillingState.cs" id="7_42irl"]
+[ext_resource type="Script" uid="uid://igryqsjhi4j" path="res://scripts/player/State/PlayerWateringState.cs" id="8_3xnwo"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rp718"]
 radius = 8.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("toolTimer", "stateMachine")]
 script = ExtResource("1_hss88")
+toolTimer = NodePath("ToolTimer")
+stateMachine = NodePath("StateMachine")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = ExtResource("1_rp718")
-animation = &"idle_front"
+animation = &"watering_right"
 autoplay = "idle_front"
-frame_progress = 0.752784
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -8)
 shape = SubResource("CircleShape2D_rp718")
 
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("startState")]
+[node name="StateMachine" type="Node" parent="."]
 script = ExtResource("3_hss88")
-startState = NodePath("Idel")
+startState = 1
 
 [node name="Idel" type="Node" parent="StateMachine"]
-script = ExtResource("4_6avc5")
+script = ExtResource("4_xuses")
 
 [node name="Walk" type="Node" parent="StateMachine"]
-script = ExtResource("5_qd3e3")
+script = ExtResource("5_42irl")
+
+[node name="Chopping" type="Node" parent="StateMachine"]
+script = ExtResource("6_xuses")
+
+[node name="Tilling" type="Node" parent="StateMachine"]
+script = ExtResource("7_42irl")
+
+[node name="Watering" type="Node" parent="StateMachine"]
+script = ExtResource("8_3xnwo")
+
+[node name="ToolTimer" type="Timer" parent="."]
+wait_time = 0.3
+one_shot = true

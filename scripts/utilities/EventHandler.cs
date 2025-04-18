@@ -2,8 +2,8 @@ using System;
 
 public class PlayerEvent
 {
-    public static Action<State> playerStateChangeEvent;
-    public static void OnPlayerStateChangeEvent(State state)
+    public static Action<Enums.State> playerStateChangeEvent;
+    public static void OnPlayerStateChangeEvent(Enums.State state)
     {
         playerStateChangeEvent?.Invoke(state);
     }

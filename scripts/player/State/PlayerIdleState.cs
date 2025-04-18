@@ -3,8 +3,6 @@ using System;
 
 public partial class PlayerIdleState : PlayerBaseState
 {
-	private AnimatedSprite2D animatedSprite2D = null;
-	private string currentAnimationName;
 	public override void _Ready()
 	{
 		frontName = "idle_front";
@@ -12,7 +10,7 @@ public partial class PlayerIdleState : PlayerBaseState
 		leftName = "idle_left";
 		rightName = "idle_right";
 		currentAnimationName = frontName;
-		state = State.IDLE;
+		state = Enums.State.IDLE;
 	}
 
 }

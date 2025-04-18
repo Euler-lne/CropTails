@@ -5,8 +5,8 @@ public partial class BaseState : Node
 {
 	protected BaseStateMachine stateMachine;
 	protected Node stateOwner;
-	protected State state;
-	public State GetState() { return state; }
+	protected Enums.State state;
+	public Enums.State GetState() { return state; }
 	/// <summary>
 	/// 初始化
 	/// </summary>

@@ -19,7 +19,7 @@ public partial class PlayerStateMachine : BaseStateMachine
         PlayerEvent.playerStateChangeEvent -= OnPlayerStateChangeEvent;
     }
 
-    private void OnPlayerStateChangeEvent(State state)
+    private void OnPlayerStateChangeEvent(Enums.State state)
     {
         ChangeToState(state);
     }

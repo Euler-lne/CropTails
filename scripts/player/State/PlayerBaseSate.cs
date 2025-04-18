@@ -3,8 +3,8 @@ using System;
 
 public partial class PlayerBaseState : BaseState
 {
-    private AnimatedSprite2D animatedSprite2D = null;
-    private string currentAnimationName;
+    protected AnimatedSprite2D animatedSprite2D = null;
+    protected string currentAnimationName;
     protected string frontName, backName, leftName, rightName;
 
     public override void OnStateEnter()
@@ -20,10 +20,10 @@ public partial class PlayerBaseState : BaseState
     {
         string animationName = ((Player)stateOwner).faceDirection switch
         {
-            FaceDirection.FRONT => frontName,
-            FaceDirection.BACK => backName,
-            FaceDirection.LEFT => leftName,
-            FaceDirection.RIGHT => rightName,
+            Enums.FaceDirection.FRONT => frontName,
+            Enums.FaceDirection.BACK => backName,
+            Enums.FaceDirection.LEFT => leftName,
+            Enums.FaceDirection.RIGHT => rightName,
             _ => throw new NotImplementedException(),
         };
         if (animationName != currentAnimationName)
