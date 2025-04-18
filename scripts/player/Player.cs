@@ -34,10 +34,14 @@ public partial class Player : CharacterBody2D
 	private Vector2 Move(Vector2 direction, out Enums.State state)
 	{
 		Vector2 velocity = Velocity;
-		if (direction != Vector2.Zero)
+		if (direction == Vector2.Up || direction == Vector2.Down)
+		{
+			velocity.Y = direction.Y * Speed;
+			state = Enums.State.WALK;
+		}
+		else if (direction == Vector2.Left || direction == Vector2.Right)
 		{
 			velocity.X = direction.X * Speed;
-			velocity.Y = direction.Y * Speed;
 			state = Enums.State.WALK;
 		}
 		else
@@ -46,6 +50,7 @@ public partial class Player : CharacterBody2D
 			velocity.Y = Mathf.MoveToward(Velocity.Y, 0, Speed);
 			state = Enums.State.IDLE;
 		}
+
 		return velocity;
 	}
 	private Enums.State UseTool()
