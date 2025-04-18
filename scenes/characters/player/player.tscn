@@ -1,0 +1,34 @@
+[gd_scene load_steps=7 format=3 uid="uid://e65psnc5h7ee"]
+
+[ext_resource type="Script" uid="uid://db3fbtcyg2tu1" path="res://scripts/player/Player.cs" id="1_hss88"]
+[ext_resource type="SpriteFrames" uid="uid://c5nf732c1kh2r" path="res://animation/player.tres" id="1_rp718"]
+[ext_resource type="Script" uid="uid://b4dw8ghe25hy4" path="res://scripts/player/PlayerStateMachine.cs" id="3_hss88"]
+[ext_resource type="Script" uid="uid://cui2oegyncglw" path="res://scripts/player/PlayerIdleState.cs" id="4_6avc5"]
+[ext_resource type="Script" uid="uid://ejg3b0827p56" path="res://scripts/player/PlayerWalkState.cs" id="5_qd3e3"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rp718"]
+radius = 8.0
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_hss88")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+sprite_frames = ExtResource("1_rp718")
+animation = &"idle_front"
+autoplay = "idle_front"
+frame_progress = 0.752784
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -8)
+shape = SubResource("CircleShape2D_rp718")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("startState")]
+script = ExtResource("3_hss88")
+startState = NodePath("Idel")
+
+[node name="Idel" type="Node" parent="StateMachine"]
+script = ExtResource("4_6avc5")
+
+[node name="Walk" type="Node" parent="StateMachine"]
+script = ExtResource("5_qd3e3")
