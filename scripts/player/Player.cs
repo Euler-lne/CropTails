@@ -36,12 +36,14 @@ public partial class Player : CharacterBody2D
 		Vector2 velocity = Velocity;
 		if (direction == Vector2.Up || direction == Vector2.Down)
 		{
-			velocity.Y = direction.Y * Speed;
+			velocity.Y = (direction == Vector2.Up ? -1 : 1) * Speed;
+			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
 			state = Enums.State.WALK;
 		}
 		else if (direction == Vector2.Left || direction == Vector2.Right)
 		{
-			velocity.X = direction.X * Speed;
+			velocity.X = (direction == Vector2.Left ? -1 : 1) * Speed;
+			velocity.Y = Mathf.MoveToward(Velocity.Y, 0, Speed);
 			state = Enums.State.WALK;
 		}
 		else
