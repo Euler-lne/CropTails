@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://e65psnc5h7ee"]
+[gd_scene load_steps=12 format=3 uid="uid://e65psnc5h7ee"]
 
 [ext_resource type="Script" uid="uid://db3fbtcyg2tu1" path="res://scripts/player/Player.cs" id="1_hss88"]
 [ext_resource type="SpriteFrames" uid="uid://c5nf732c1kh2r" path="res://animation/player.tres" id="1_rp718"]
@@ -8,21 +8,32 @@
 [ext_resource type="Script" uid="uid://deojtld5br4oa" path="res://scripts/player/State/PlayerChoppingState.cs" id="6_xuses"]
 [ext_resource type="Script" uid="uid://cyglhju54o2fr" path="res://scripts/player/State/PlayerTillingState.cs" id="7_42irl"]
 [ext_resource type="Script" uid="uid://igryqsjhi4j" path="res://scripts/player/State/PlayerWateringState.cs" id="8_3xnwo"]
+[ext_resource type="PackedScene" uid="uid://buvo4ib8dvtaw" path="res://scenes/components/hit_componet.tscn" id="9_42irl"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rp718"]
 radius = 4.0
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("toolTimer", "stateMachine")]
+[sub_resource type="CircleShape2D" id="CircleShape2D_3xnwo"]
+radius = 3.0
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("toolTimer", "stateMachine", "hitCollision", "frontHitPos", "leftHitPos", "rightHitPos", "backHitPos")]
 collision_layer = 2
 script = ExtResource("1_hss88")
 toolTimer = NodePath("ToolTimer")
 stateMachine = NodePath("StateMachine")
+hitCollision = NodePath("HitComponet/CollisionShape2D")
+frontHitPos = NodePath("HitPosition/Front")
+leftHitPos = NodePath("HitPosition/Left")
+rightHitPos = NodePath("HitPosition/Right")
+backHitPos = NodePath("HitPosition/Back")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -8)
 sprite_frames = ExtResource("1_rp718")
-animation = &"watering_right"
+animation = &"chopping_front"
 autoplay = "idle_front"
+frame = 1
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -4)
@@ -50,3 +61,25 @@ script = ExtResource("8_3xnwo")
 [node name="ToolTimer" type="Timer" parent="."]
 wait_time = 0.3
 one_shot = true
+
+[node name="HitComponet" parent="." instance=ExtResource("9_42irl")]
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitComponet"]
+position = Vector2(-4, 2)
+shape = SubResource("CircleShape2D_3xnwo")
+debug_color = Color(0, 0, 0.701961, 0.419608)
+
+[node name="HitPosition" type="Node2D" parent="."]
+
+[node name="Front" type="Node2D" parent="HitPosition"]
+position = Vector2(-4, 2)
+
+[node name="Back" type="Node2D" parent="HitPosition"]
+position = Vector2(3, -20)
+
+[node name="Left" type="Node2D" parent="HitPosition"]
+position = Vector2(-9, -1)
+
+[node name="Right" type="Node2D" parent="HitPosition"]
+position = Vector2(9, -1)

@@ -1,8 +1,10 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class PlayerChoppingState : PlayerBaseState
 {
+	private bool isFirst = false;
 	public override void _Ready()
 	{
 		frontName = "chopping_front";
@@ -12,10 +14,20 @@ public partial class PlayerChoppingState : PlayerBaseState
 		currentAnimationName = frontName;
 		state = Enums.State.CHOPPING;
 	}
+	public override void OnStateFrameUpdate(float delta)
+	{
+		base.OnStateFrameUpdate(delta);
+		if (animatedSprite2D != null && animatedSprite2D.Frame == 1 && isFirst)
+		{
+			((Player)stateOwner).SetHitCollitionActive();
+			isFirst = false;
+		}
+	}
 	public override void OnStateEnter()
 	{
 		base.OnStateEnter();
 		animatedSprite2D.AnimationFinished += OnAnimationFinished;
+		isFirst = true;
 	}
 	public override void OnStateExit()
 	{

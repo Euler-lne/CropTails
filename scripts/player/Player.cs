@@ -8,49 +8,66 @@ public partial class Player : CharacterBody2D
 	[Export] public Enums.Tools currentTool = Enums.Tools.NONE;
 	[Export] Timer toolTimer;
 	[Export] BaseStateMachine stateMachine;
+	[Export] CollisionShape2D hitCollision;
+	[Export] Node2D frontHitPos;
+	[Export] Node2D leftHitPos;
+	[Export] Node2D rightHitPos;
+	[Export] Node2D backHitPos;
+
 	private bool isHitting = false;
-	public void HittingFinish()
+
+	private bool _isPressHit = false;
+	private Vector2 _direction = Vector2.Zero;
+
+	public override void _Ready()
 	{
-		isHitting = false;
-		toolTimer.Start();
-		PlayerEvent.OnPlayerStateChangeEvent(Enums.State.IDLE);
+		hitCollision.Disabled = true;
+		hitCollision.Position = frontHitPos.Position;
+	}
+	public override void _Process(double delta)
+	{
+		_direction = Input.GetVector("walk_left", "walk_right", "walk_up", "walk_down");
+		_isPressHit = Input.IsActionPressed("hit");
+		UpdateState();
 	}
 	public override void _PhysicsProcess(double delta)
 	{
 		if (isHitting)
 			return;
+		SetFaceDirection(_direction);
+		Velocity = Move(_direction);
+		MoveAndSlide();
+	}
+	private void UpdateState()
+	{
+		if (isHitting)
+			return;
 		Enums.State currentState = Enums.State.NONE;
-		Vector2 direction = Input.GetVector("walk_left", "walk_right", "walk_up", "walk_down");
-		SetFaceDirection(direction);
-		if (Input.IsActionPressed("hit") && !isHitting && toolTimer.IsStopped())
+		if (_isPressHit && !isHitting && toolTimer.IsStopped())
 			currentState = UseTool();
 		if (currentState == Enums.State.NONE)
-			Velocity = Move(direction, out currentState);
+			currentState = Velocity.Length() <= 0.000001 ? Enums.State.IDLE : Enums.State.WALK;
 		else
 			isHitting = true;
 		ChangeState(currentState);
-		MoveAndSlide();
 	}
-	private Vector2 Move(Vector2 direction, out Enums.State state)
+	private Vector2 Move(Vector2 direction)
 	{
 		Vector2 velocity = Velocity;
 		if (direction == Vector2.Up || direction == Vector2.Down)
 		{
 			velocity.Y = (direction == Vector2.Up ? -1 : 1) * Speed;
 			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
-			state = Enums.State.WALK;
 		}
 		else if (direction == Vector2.Left || direction == Vector2.Right)
 		{
 			velocity.X = (direction == Vector2.Left ? -1 : 1) * Speed;
 			velocity.Y = Mathf.MoveToward(Velocity.Y, 0, Speed);
-			state = Enums.State.WALK;
 		}
 		else
 		{
 			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
 			velocity.Y = Mathf.MoveToward(Velocity.Y, 0, Speed);
-			state = Enums.State.IDLE;
 		}
 
 		return velocity;
@@ -66,7 +83,6 @@ public partial class Player : CharacterBody2D
 			Enums.Tools.TOMATO => Enums.State.NONE,
 			_ => Enums.State.NONE,
 		};
-
 	}
 
 	private void ChangeState(Enums.State state)
@@ -80,5 +96,36 @@ public partial class Player : CharacterBody2D
 			faceDirection = direction.X > 0 ? Enums.FaceDirection.RIGHT : Enums.FaceDirection.LEFT;
 		if (direction.Y != 0)
 			faceDirection = direction.Y > 0 ? Enums.FaceDirection.FRONT : Enums.FaceDirection.BACK;
+		SetHitCollisionPos();
+	}
+	private void SetHitCollisionPos()
+	{
+		switch (faceDirection)
+		{
+			case Enums.FaceDirection.FRONT:
+				hitCollision.Position = frontHitPos.Position;
+				break;
+			case Enums.FaceDirection.BACK:
+				hitCollision.Position = backHitPos.Position;
+				break;
+			case Enums.FaceDirection.LEFT:
+				hitCollision.Position = leftHitPos.Position;
+				break;
+			case Enums.FaceDirection.RIGHT:
+				hitCollision.Position = rightHitPos.Position;
+				break;
+		}
+	}
+
+	public void HittingFinish()
+	{
+		hitCollision.Disabled = true;
+		isHitting = false;
+		toolTimer.Start();
+		PlayerEvent.OnPlayerStateChangeEvent(Enums.State.IDLE);
+	}
+	public void SetHitCollitionActive()
+	{
+		hitCollision.Disabled = false;
 	}
 }
